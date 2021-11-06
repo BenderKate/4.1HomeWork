@@ -42,5 +42,8 @@ public class DataGenerator {
     public static String generateOnlyName(){
         return "Катя";
     }
+    public static String generateNameWithE(){
+        return "Ёжик Иванович";
+    }
 
 }

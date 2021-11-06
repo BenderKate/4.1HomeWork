@@ -93,5 +93,20 @@ public class CardDeliveryTest {
                 .shouldHave(exactText("Встреча успешно запланирована на  " + firstMeetingDate));
     }
 
+    @Test
+    void shouldRegisterWithLetterE(){
+        $("[data-test-id=city] input").setValue(generateCity());
+        $("[placeholder='Дата встречи']").doubleClick().sendKeys(Keys.BACK_SPACE);
+        val firstMeetingDate = generateDate(2, 1);
+        $("[placeholder='Дата встречи']").setValue(firstMeetingDate);
+        $("[name='name']").setValue(generateNameWithE());
+        $("[name='phone']").setValue(faker.phoneNumber().phoneNumber());
+        $("[data-test-id=agreement]").click();
+        $("[class='button__text']").click();
+        $("[data-test-id=name] .input__sub")
+                .shouldHave(exactText("Имя и Фамилия указаные неверно. Допустимы только русские буквы, пробелы и дефисы."));
+
+    }
+
 
 }
