@@ -16,8 +16,7 @@ import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selectors.withText;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.open;
-import static ru.netology.DataGenerator.generateCity;
-import static ru.netology.DataGenerator.generateDate;
+import static ru.netology.DataGenerator.*;
 
 
 public class CardDeliveryTest {
@@ -56,10 +55,43 @@ public class CardDeliveryTest {
                 .shouldHave(exactText("У вас уже запланирована встреча на другую дату. Перепланировать?\n" +
                         "\n" +
                         "Перепланировать"));
-        $(By.className("button__text")).click();
+        $(By.cssSelector(" div:nth-child(4) div.notification__content button")).click();
         $("[data-test-id=success-notification] .notification__content")
                 .shouldBe(visible, Duration.ofSeconds(15))
                 .shouldHave(exactText("Встреча успешно запланирована на  " + secondMeetingDate));
 
     }
+
+
+    @Test
+    void shouldRegisterWithoutFullName(){
+        $("[data-test-id=city] input").setValue(generateCity());
+        $("[placeholder='Дата встречи']").doubleClick().sendKeys(Keys.BACK_SPACE);
+        val firstMeetingDate = generateDate(5, 2);
+        $("[placeholder='Дата встречи']").setValue(firstMeetingDate);
+        $("[name='name']").setValue(generateOnlyName());
+        $("[name='phone']").setValue(faker.phoneNumber().phoneNumber());
+        $("[data-test-id=agreement]").click();
+        $("[class='button__text']").click();
+        $("[data-test-id=success-notification] .notification__content")
+                .shouldBe(visible, Duration.ofSeconds(15))
+                .shouldHave(exactText("Встреча успешно запланирована на  " + firstMeetingDate));
+    }
+
+    @Test
+    void shouldRegisterWithWrongNumber(){
+        $("[data-test-id=city] input").setValue(generateCity());
+        $("[placeholder='Дата встречи']").doubleClick().sendKeys(Keys.BACK_SPACE);
+        val firstMeetingDate = generateDate(5, 2);
+        $("[placeholder='Дата встречи']").setValue(firstMeetingDate);
+        $("[name='name']").setValue(faker.name().fullName());
+        $("[name='phone']").setValue(generateInvalidPhone());
+        $("[data-test-id=agreement]").click();
+        $("[class='button__text']").click();
+        $("[data-test-id=success-notification] .notification__content")
+                .shouldBe(visible, Duration.ofSeconds(15))
+                .shouldHave(exactText("Встреча успешно запланирована на  " + firstMeetingDate));
+    }
+
+
 }

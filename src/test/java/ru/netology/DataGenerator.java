@@ -36,4 +36,11 @@ public class DataGenerator {
                 .format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
     }
 
+    public static String generateInvalidPhone(){
+        return "+7";
+    }
+    public static String generateOnlyName(){
+        return "Катя";
+    }
+
 }
