@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 
+import java.time.Duration;
 import java.util.Locale;
 
 import static com.codeborne.selenide.Condition.exactText;
@@ -44,20 +45,20 @@ public class CardDeliveryTest {
         $("[data-test-id=agreement]").click();
         $("[class='button__text']").click();
         $("[data-test-id=success-notification] .notification__content")
-                .waitUntil(visible, 15000)
+                .shouldBe(visible, Duration.ofSeconds(15))
                 .shouldHave(exactText("Встреча успешно запланирована на  " + firstMeetingDate));
         val secondMeetingDate = generateDate(5, 4);
         $("[placeholder='Дата встречи']").doubleClick().sendKeys(Keys.BACK_SPACE);
         $("[placeholder='Дата встречи']").setValue(secondMeetingDate);
         $(withText("Запланировать")).click();
         $("[data-test-id=replan-notification] .notification__content")
-                .waitUntil(visible, 15000)
+                .shouldBe(visible, Duration.ofSeconds(15))
                 .shouldHave(exactText("У вас уже запланирована встреча на другую дату. Перепланировать?\n" +
                         "\n" +
                         "Перепланировать"));
         $(By.className("button__text")).click();
         $("[data-test-id=success-notification] .notification__content")
-                .waitUntil(visible, 20000)
+                .shouldBe(visible, Duration.ofSeconds(15))
                 .shouldHave(exactText("Встреча успешно запланирована на  " + secondMeetingDate));
 
     }
