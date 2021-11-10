@@ -21,13 +21,6 @@ import static ru.netology.DataGenerator.*;
 
 public class CardDeliveryTest {
 
-    private static Faker faker;
-
-    @BeforeAll
-    static void setUpAll() {
-        faker = new Faker(new Locale("ru"));
-    }
-
     @BeforeEach
     void setUp() {
         open("http://localhost:9999");
@@ -35,12 +28,13 @@ public class CardDeliveryTest {
 
     @Test
     void shouldRegister() {
-        $("[data-test-id=city] input").setValue(generateCity());
+        val validUser = DataGenerator.Registration.generateUser("ru");
+        $("[data-test-id=city] input").setValue(validUser.getCity());
         $("[placeholder='Дата встречи']").doubleClick().sendKeys(Keys.BACK_SPACE);
         val firstMeetingDate = generateDate(2, 1);
         $("[placeholder='Дата встречи']").setValue(firstMeetingDate);
-        $("[name='name']").setValue(faker.name().fullName());
-        $("[name='phone']").setValue(faker.phoneNumber().phoneNumber());
+        $("[name='name']").setValue(validUser.getName());
+        $("[name='phone']").setValue(validUser.getPhoneNumber());
         $("[data-test-id=agreement]").click();
         $("[class='button__text']").click();
         $("[data-test-id=success-notification] .notification__content")
@@ -64,49 +58,46 @@ public class CardDeliveryTest {
 
 
     @Test
-    void shouldRegisterWithoutFullName(){
-        $("[data-test-id=city] input").setValue(generateCity());
+    void shouldRegisterWithoutFullName() {
+        val validUser = DataGenerator.Registration.generateUser("ru");
+        $("[data-test-id=city] input").setValue(validUser.getCity());
         $("[placeholder='Дата встречи']").doubleClick().sendKeys(Keys.BACK_SPACE);
         val firstMeetingDate = generateDate(5, 2);
         $("[placeholder='Дата встречи']").setValue(firstMeetingDate);
         $("[name='name']").setValue(generateOnlyName());
-        $("[name='phone']").setValue(faker.phoneNumber().phoneNumber());
+        $("[name='phone']").setValue(validUser.getPhoneNumber());
         $("[data-test-id=agreement]").click();
         $("[class='button__text']").click();
-        $("[data-test-id=success-notification] .notification__content")
-                .shouldBe(visible, Duration.ofSeconds(15))
-                .shouldHave(exactText("Встреча успешно запланирована на  " + firstMeetingDate));
+        $("[data-test-id=name] .input__sub").shouldBe(exactText("Укажите точно как в паспорте."));
     }
 
     @Test
-    void shouldRegisterWithWrongNumber(){
-        $("[data-test-id=city] input").setValue(generateCity());
+    void shouldRegisterWithWrongNumber() {
+        val validUser = DataGenerator.Registration.generateUser("ru");
+        $("[data-test-id=city] input").setValue(validUser.getCity());
         $("[placeholder='Дата встречи']").doubleClick().sendKeys(Keys.BACK_SPACE);
         val firstMeetingDate = generateDate(5, 2);
         $("[placeholder='Дата встречи']").setValue(firstMeetingDate);
-        $("[name='name']").setValue(faker.name().fullName());
+        $("[name='name']").setValue(validUser.getName());
         $("[name='phone']").setValue(generateInvalidPhone());
         $("[data-test-id=agreement]").click();
         $("[class='button__text']").click();
-        $("[data-test-id=success-notification] .notification__content")
-                .shouldBe(visible, Duration.ofSeconds(15))
-                .shouldHave(exactText("Встреча успешно запланирована на  " + firstMeetingDate));
+        $("[data-test-id=phone] .input__sub").shouldBe(exactText("Телефон указан неверно. Должно быть 11 цифр, например, +79012345678."));
     }
 
     @Test
-    void shouldRegisterWithLetterE(){
-        $("[data-test-id=city] input").setValue(generateCity());
+    void shouldRegisterWithLetterE() {
+        val validUser = DataGenerator.Registration.generateUser("ru");
+        $("[data-test-id=city] input").setValue(validUser.getCity());
         $("[placeholder='Дата встречи']").doubleClick().sendKeys(Keys.BACK_SPACE);
         val firstMeetingDate = generateDate(2, 1);
         $("[placeholder='Дата встречи']").setValue(firstMeetingDate);
         $("[name='name']").setValue(generateNameWithE());
-        $("[name='phone']").setValue(faker.phoneNumber().phoneNumber());
+        $("[name='phone']").setValue(validUser.getPhoneNumber());
         $("[data-test-id=agreement]").click();
         $("[class='button__text']").click();
-        $("[data-test-id=name] .input__sub")
-                .shouldHave(exactText("Имя и Фамилия указаные неверно. Допустимы только русские буквы, пробелы и дефисы."));
-
+        $("[data-test-id=success-notification] .notification__content")
+                .shouldBe(visible, Duration.ofSeconds(15))
+                .shouldHave(exactText("Встреча успешно запланирована на  " + firstMeetingDate));
     }
-
-
 }

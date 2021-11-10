@@ -16,7 +16,7 @@ public class DataGenerator {
         public static class Registration {
         private Registration() {}
 
-            public static RegistrationInfo generateByCard(String locale) {
+            public static RegistrationInfo generateUser(String locale) {
             Faker faker =new Faker(new Locale(locale));
             return new RegistrationInfo(generateCity(),
                     faker.name().fullName(),
